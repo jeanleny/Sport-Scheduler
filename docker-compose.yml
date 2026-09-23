@@ -1,0 +1,42 @@
+services:
+  db:
+    image: postgres:17
+    container_name: scheduler_db
+    restart: unless-stopped
+
+    env_file:
+      - .env
+
+    ports:
+      - "5432:5432"
+
+    volumes: 
+      - postgres_data:/var/lib/postgresql/data
+
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 2s
+      timeout: 5s
+      retries: 10
+
+  migrations:
+    image: migrate/migrate
+    depends_on:
+      db:
+        condition : service_healthy
+    volumes:
+       - ./migrations:/migrations
+    command: ["-path", "/migrations", "-database", "postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/scheduler?sslmode=disable", "up"]
+    
+  api:
+    build: ./server
+    container_name: api
+    depends_on:
+      - db
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+
+volumes :
+  postgres_data:
+  migrations:

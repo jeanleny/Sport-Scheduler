@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>htmx test</title>
+  <script src="https://unpkg.com/htmx.org@1.9.12"></script>
+</head>
+<body>
+
+  <button hx-get="/clicked" hx-target="#result" hx-swap="afterend">
+    Click me
+  </button>
+
+  <div id="result"></div>
+
+</body>
+</html>
