@@ -1,0 +1,21 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: migrations
+spec:
+  backoffLimit: 20      
+  template:
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - name: migrate
+          image: scheduler-migrate:v1
+          imagePullPolicy: IfNotPresent
+          envFrom:
+            - secretRef: { name: db-credentials }
+          args:
+            - "-path"
+            - "/migrations"
+            - "-database"
+            - "postgres://$(POSTGRES_USER):$(POSTGRES_PASSWORD)@db:5432/$(POSTGRES_DB)?sslmode=disable"
+            - "up"
