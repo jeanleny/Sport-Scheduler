@@ -3,7 +3,7 @@ kind: Job
 metadata:
   name: migrations
 spec:
-  backoffLimit: 20      
+  backoffLimit: 20
   template:
     spec:
       restartPolicy: OnFailure
@@ -11,8 +11,16 @@ spec:
         - name: migrate
           image: scheduler-migrate:v1
           imagePullPolicy: IfNotPresent
-          envFrom:
-            - secretRef: { name: db-credentials }
+          env:
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef: { name: db-secret, key: POSTGRES_USER }
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef: { name: db-secret, key: POSTGRES_PASSWORD }
+            - name: POSTGRES_DB
+              valueFrom:
+                secretKeyRef: { name: db-secret, key: POSTGRES_DB }
           args:
             - "-path"
             - "/migrations"
