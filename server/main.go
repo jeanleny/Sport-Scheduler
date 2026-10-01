@@ -31,6 +31,7 @@ func main() {
 	router := http.NewServeMux()
 	router.HandleFunc("/", front.Index)
 	router.HandleFunc("/clicked", front.Clicked)
+	router.HandleFunc("/enter_text", front.EnteredText)
 	router.Handle("/metrics", promhttp.Handler())
 	fmt.Println("Server CREATION")
 	log.Fatal(http.ListenAndServe(":8080", router))

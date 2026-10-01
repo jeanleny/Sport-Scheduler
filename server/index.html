@@ -6,12 +6,14 @@
   <script src="https://unpkg.com/htmx.org@1.9.12"></script>
 </head>
 <body>
-
-  <button hx-get="/clicked" hx-target="#result" hx-swap="afterend">
-    Click me
-  </button>
-
-  <div id="result"></div>
+  <input type="text" id="q" name="q" placeholder="ton nom wsh">
+  <button	hx-get="/enter_text"
+	  		hx-target="#result"
+			hx-include="#q"
+			hx-swap="innerHTML">
+	  soubmite
+</button>
+  <p id="result"> bhe alors</p>
 
 </body>
 </html>
