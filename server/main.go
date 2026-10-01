@@ -8,6 +8,7 @@ import (
 	"log"
 	"net/http"
 	frontend "sportS/frontend"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
 type s_db struct {
@@ -30,6 +31,7 @@ func main() {
 	router := http.NewServeMux()
 	router.HandleFunc("/", front.Index)
 	router.HandleFunc("/clicked", front.Clicked)
+	router.Handle("/metrics", promhttp.Handler())
 	fmt.Println("Server CREATION")
 	log.Fatal(http.ListenAndServe(":8080", router))
 	db.db.Close()
