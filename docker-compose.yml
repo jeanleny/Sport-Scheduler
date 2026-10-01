@@ -37,6 +37,36 @@ services:
     ports:
       - "8080:8080"
 
+      #Postgres il balance pas de métrique ducoup faut run un container en plus qui se connecte a la db qui run des queries de stats et les exposes dans un resultat que prometheus pige
+  postgres-exporter:
+    image: prometheuscommunity/postgres-exporter
+    ports:
+      - "9187:9187"
+    environment:
+      DATA_SOURCE_NAME: "postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/scheduler?sslmode=disable"
+    depends_on:
+      - db
+
+
+  prometheus:
+    image: prom/prometheus
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus-data:/prometheus
+    ports:
+      - "9090:9090"
+
+  grafana:
+    image: grafana/grafana
+    volumes:
+      - grafana-data:/var/lib/grafana
+    ports:
+      - "3000:3000"
+    depends_on:
+      - prometheus
+
 volumes :
   postgres_data:
   migrations:
+  prometheus-data:
+  grafana-data:
